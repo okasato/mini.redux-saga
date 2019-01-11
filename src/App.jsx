@@ -4,35 +4,24 @@ import actions from './action';
 import Market from './Market';
 
 class App extends Component {
-  componentWillMount() {
-
-  }
 
   render() {
+    console.log('rendered')
     const {
       markets,
       fetchMarketsRequest,
       fetchTickersRequest,
+      updatedMarkets,
     } = this.props;
-    console.log('what is market in App component?', markets)
+    
     return (
       <div className='container'>
         <div>
           {markets.map((market, index) => {
-            const { id } = market;
             return (
-              <div>
-                {/* <div key={index}>{market.name}</div> */}
-                <div key={index}>{market.market}</div>
-                <div key={index}>{market.ticker.last}</div>
-                {/* <button
-                  key={index}
-                  type='button'
-                  onClick={fetchTickersRequest(id)}
-                >
-                  GET
-                </button>
-                <Market /> */}
+              <div key={index}>
+                <div>{`[${index}] ${market.market}`}</div>
+                <div>{market.last}</div>
               </div>
             )
           })}
@@ -47,13 +36,15 @@ const mapStateToProps = ({
   markets,
   marketsRequest,
   marketsSuccess,
-  marketsError
+  marketsError,
+  updatedMarkets,
 }) => {
   return {
     markets,
     marketsRequest,
     marketsSuccess,
-    marketsError
+    marketsError,
+    updatedMarkets,
   }
 }
 
