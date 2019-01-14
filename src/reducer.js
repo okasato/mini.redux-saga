@@ -63,7 +63,7 @@ const fetchMarketsSuccess = (state, action) => {
     if (markets[i].last - state.markets[i].last === 0 && currentChanges[i]) {      
       changes.push(currentChanges[i]);
     } else {
-      changes.push(markets[i].last - state.markets[i].last);
+      changes.push((markets[i].last - state.markets[i].last) / markets[i].last * 100);
     }
   }
 

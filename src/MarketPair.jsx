@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+const isEqual = (nextProp, currentProp) => {
+  return JSON.stringify(nextProp) === JSON.stringify(currentProp);
+}
+
 class MarketPair extends Component {
+  shouldComponentUpdate(nextProps) {
+    const propsDiff = isEqual(nextProps.market, this.props.market);
+    return !propsDiff;
+  }
 
   render() {
     const {
@@ -9,32 +17,24 @@ class MarketPair extends Component {
       changes,
       index,
     } = this.props;
-
+    console.log('hey index is', index)
     return (
-      <div className='marketPair' key={index}>
-        <div>{`[${index}] ${market.market}`}</div>
-        <div>{market.last}</div>
-        <div style={{ color: changes[index] > 0 ? 'lime' : 'red' }}>{changes[index]}</div>
-      </div>
+      <li className='marketPair' key={index}>
+        <div style={{ fontSize: 20, fontFamily: 'Avenir' }}>{`${market.market} ${market.last}`}</div>
+        <div style={{ fontFamily: 'Avenir', color: changes[index] >= 0 ? 'lime' : 'red' }}>
+          {`${changes[index] >= 0 ? '↑' : '↓'} ${changes[index] ? changes[index].toFixed(2) : 0}%`}
+        </div>
+      </li>
     )
   }
 }
 
 const mapStateToProps = ({
-  markets,
   changes,
 }) => {
   return {
-    markets,
     changes,
   }
 }
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     fetchMarketsRequest: () => dispatch(actions.fetchMarketsRequest()),
-//     fetchTickersRequest: market => dispatch(actions.fetchTickersRequest(market)),
-//   }
-// };
 
 export default connect(mapStateToProps, null)(MarketPair);
