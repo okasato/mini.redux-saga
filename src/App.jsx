@@ -6,22 +6,24 @@ import Market from './Market';
 class App extends Component {
 
   render() {
-    console.log('rendered')
     const {
       markets,
       fetchMarketsRequest,
-      fetchTickersRequest,
-      updatedMarkets,
+      // fetchTickersRequest,
+      // updatedMarkets,
+      changes,
     } = this.props;
-    
+
     return (
       <div className='container'>
         <div>
           {markets.map((market, index) => {
+            const color = changes[index] > 0 ? 'lime' : 'red';
             return (
               <div key={index}>
                 <div>{`[${index}] ${market.market}`}</div>
                 <div>{market.last}</div>
+                <div style={{ color: color }}>{changes[index]}</div>
               </div>
             )
           })}
@@ -38,6 +40,7 @@ const mapStateToProps = ({
   marketsSuccess,
   marketsError,
   updatedMarkets,
+  changes,
 }) => {
   return {
     markets,
@@ -45,6 +48,7 @@ const mapStateToProps = ({
     marketsSuccess,
     marketsError,
     updatedMarkets,
+    changes,
   }
 }
 

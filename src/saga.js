@@ -23,6 +23,7 @@ const websocketAPI = url => {
 const createSocketChannel = socket => {
   return eventChannel(emit => {
     const tickersHandler = data => {
+      console.log(data)
       emit(data);
     }
     socket.on('tickers', tickersHandler);
@@ -41,8 +42,6 @@ function* fetchMarkets(action) {
     const socketChannel = yield call(createSocketChannel, socket);
     while(true) {
       const payload = yield take(socketChannel);
-      // yield put(actions.fetchMarketsSuccess(payload.data));
-      // yield put(actions.websocketMarketsSuccess(payload.data));
       const state = yield select();
       const updatedState = state.markets.map(marketPair => {
         for (let i = 0; i < payload.data.length; i += 1) {
@@ -52,8 +51,9 @@ function* fetchMarkets(action) {
           }
         }
         return marketPair;
-      })
+      });
       yield put(actions.fetchMarketsSuccess(updatedState));
+      // yield put(actions.fetchMarketsSuccess(response.markets, payload.data));
     }
   } catch (error) {
     console.log(error);

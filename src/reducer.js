@@ -12,6 +12,7 @@ const INITIAL_STATE = Immutable({
   tickersRequest: false,
   tickersSuccess: false,
   tickersError: false,
+  changes: [],
 });
 
 const fetchMarketsRequest = state => {
@@ -21,24 +22,29 @@ const fetchMarketsRequest = state => {
   };
 }
 
-const websocketMarketsSuccess = (state, action) => {
-  for (let i = 0; i < action.markets.length; i += 1) {
-    for (let j = 0; j < state.markets.length; j += 1) {
-      if (state.markets[j].market === action.markets[i].market) {
-        state.markets[j].last = action.markets[i].ticker.last;
-      }
-    }
-  }
-  const updatedMarkets = state.markets;
-
-  return { 
-    ...state,
-    updatedMarkets,
-    markets: updatedMarkets,
-  };
-}
-
 const fetchMarketsSuccess = (state, action) => {
+  // const updatedMarkets = action.markets.map(marketPair => {
+  //   for (let i = 0; i < action.websocketMarkets.length; i += 1) {
+  //     if (action.websocketMarkets[i].market === marketPair.market) {
+  //       marketPair = action.websocketMarkets[i];
+  //       return marketPair;
+  //     }
+  //   }
+  //   return marketPair;
+  // });
+
+  // const formatedMarkets = updatedMarkets.map(market => {
+  //   if (market.ticker) {
+  //     return {
+  //       market: market.market,
+  //       last: market.ticker.last
+  //     }
+  //   }
+  //   return {
+  //     market: market.market,
+  //     last: market.last
+  //   }
+  // });
   const markets = action.markets.map(market => {
     if (market.ticker) {
       return {
@@ -51,11 +57,22 @@ const fetchMarketsSuccess = (state, action) => {
       last: market.last
     }
   });
+  const currentChanges = state.changes.slice();
+  let changes = [];
+  for (let i = 0; i < state.markets.length; i += 1) {
+    if (markets[i].last - state.markets[i].last === 0 && currentChanges[i]) {      
+      changes.push(currentChanges[i]);
+    } else {
+      changes.push(markets[i].last - state.markets[i].last);
+    }
+  }
 
   return { 
     ...state,
+    // markets: formatedMarkets,
     markets,
     marketsSuccess: true,
+    changes,
   };
 }
 
@@ -91,7 +108,6 @@ const fetchTickersError = state => {
 export default createReducer(INITIAL_STATE, {
   [MarketsTypes.FETCH_MARKETS_REQUEST]: fetchMarketsRequest,
   [MarketsTypes.FETCH_MARKETS_SUCCESS]: fetchMarketsSuccess,
-  [MarketsTypes.WEBSOCKET_MARKETS_SUCCESS]: websocketMarketsSuccess,
   [MarketsTypes.FETCH_MARKETS_ERROR]: fetchMarketsError,
   [MarketsTypes.FETCH_TICKERS_REQUEST]: fetchTickersRequest,
   [MarketsTypes.FETCH_TICKERS_SUCCESS]: fetchTickersSuccess,
