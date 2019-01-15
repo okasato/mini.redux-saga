@@ -53,7 +53,8 @@ const mapStateToProps = ({
   marketsRequest,
   marketsSuccess,
   marketsError,
-}) => {
+}, ownProps) => {
+  console.log('ownProps in app', ownProps)
   return {
     markets,
     marketsRequest,

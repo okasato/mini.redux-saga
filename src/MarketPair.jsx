@@ -31,7 +31,8 @@ class MarketPair extends Component {
 
 const mapStateToProps = ({
   changes,
-}) => {
+}, ownProps) => {
+  console.log('ownProps', ownProps)
   return {
     changes,
   }
